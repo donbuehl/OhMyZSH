@@ -1,7 +1,7 @@
 <?xml version='1.0' standalone='yes'?>
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "OhMyZSH">
-<!ENTITY author    "Thomas Büttner">
+<!ENTITY author    "donbuehl">
 <!ENTITY version   "2023.08.13">
 <!ENTITY launch    "Settings/OhMyZSH">
 <!ENTITY gitURL    "https://raw.githubusercontent.com/donbuehl/unraid-ohmyzsh/master">
