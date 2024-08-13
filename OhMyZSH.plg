@@ -2,7 +2,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "OhMyZSH">
 <!ENTITY author    "donbuehl">
-<!ENTITY version   "2023.08.13">
+<!ENTITY version "24.08.13-4">
 <!ENTITY launch    "Settings/OhMyZSH">
 <!ENTITY gitURL    "https://raw.githubusercontent.com/donbuehl/unraid-ohmyzsh/master">
 <!ENTITY pluginURL "&gitURL;/OhMyZSH.plg">

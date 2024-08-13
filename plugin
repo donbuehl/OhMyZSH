@@ -1,7 +1,0 @@
-#!/bin/bash
-# This file will be executed by Unraid at system startup
-
-# Your startup commands here
-/usr/local/emhttp/plugins/OhMyZSH/setup.sh
-
-# Add any other necessary commands
