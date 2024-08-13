@@ -2,13 +2,13 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "OhMyZSH">
 <!ENTITY author    "donbuehl">
-<!ENTITY version   "24.08.13-9">
+<!ENTITY version   "24.08.13-11">
 <!ENTITY launch    "Settings/OhMyZSH">
 <!ENTITY gitURL    "https://raw.githubusercontent.com/donbuehl/OhMyZSH/main">
 <!ENTITY pluginURL "&gitURL;/OhMyZSH.plg">
 <!ENTITY pkgURL    "&gitURL;/packages">
 <!ENTITY plgPATH   "/boot/config/plugins/&name;">
-<!ENTITY plgNAME   "&name;-&version;">
+<!ENTITY plgNAME   "OhMyZSH-24.08.13-11">
 <!ENTITY emhttp    "/usr/local/emhttp/plugins/&name;">
 ]>
 
