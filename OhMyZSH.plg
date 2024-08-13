@@ -2,25 +2,20 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "OhMyZSH">
 <!ENTITY author    "donbuehl">
-<!ENTITY version   "24.08.13-8">
+<!ENTITY version   "24.08.13-9">
 <!ENTITY launch    "Settings/OhMyZSH">
 <!ENTITY gitURL    "https://raw.githubusercontent.com/donbuehl/OhMyZSH/main">
 <!ENTITY pluginURL "&gitURL;/OhMyZSH.plg">
 <!ENTITY pkgURL    "&gitURL;/packages">
 <!ENTITY plgPATH   "/boot/config/plugins/&name;">
-<!ENTITY plgNAME   "OhMyZSH-24.08.13-8">
+<!ENTITY plgNAME   "&name;-&version;">
 <!ENTITY emhttp    "/usr/local/emhttp/plugins/&name;">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" support="https://forums.unraid.net/topic/XXXXXX-support-ohmyzsh-plugin/">
 
-<CHANGES>
-### 24.08.13-8
-- Update to version 24.08.13-8
-</CHANGES>
-
-<FILE Name="&plgPATH;/&name;.png">
-<URL>&gitURL;/&name;.png</URL>
+<FILE Name="&plgPATH;/images/&name;.png">
+<URL>&gitURL;/images/&name;.png</URL>
 </FILE>
 
 <FILE Run="/bin/bash">
@@ -30,11 +25,11 @@ rm -f $(ls &plgPATH;/&name;*.txz 2>/dev/null | grep -v '&version;')
 </INLINE>
 </FILE>
 
-<FILE Name="&plgPATH;/&name;-&version;-x86_64-1.txz" Run="upgradepkg --install-new">
-<URL>&gitURL;/&name;-&version;-x86_64-1.txz</URL>
+<FILE Name="&plgPATH;/&name;-&version;.txz" Run="upgradepkg --install-new">
+<URL>&gitURL;/&name;-&version;.txz</URL>
 </FILE>
 
-<FILE Name="&emhttp;/plugin" Run="/bin/bash">
+<FILE Name="&emhttp;" Run="/bin/bash">
 <INLINE>
 #!/bin/bash
 # This file will be executed by Unraid at system startup
@@ -48,7 +43,7 @@ rm -f $(ls &plgPATH;/&name;*.txz 2>/dev/null | grep -v '&version;')
 
 <FILE Run="/bin/bash">
 <INLINE>
-chmod +x &emhttp;/plugin
+chmod +x &emhttp;
 </INLINE>
 </FILE>
 
