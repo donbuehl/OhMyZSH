@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PLUGIN_DIR="/boot/config/plugins/OhMyZSH"
+
 create_symlink() {
     local source=$1
     local destination=$2
@@ -28,8 +30,8 @@ check_required_programs() {
 }
 
 check_required_files() {
-    if [ ! -d "/boot/config/extra/.oh-my-zsh" ] || [ ! -f "/boot/config/extra/.zshrc" ]; then
-        echo "Error: Required files not found in /boot/config/extra"
+    if [ ! -d "$PLUGIN_DIR/.oh-my-zsh" ] || [ ! -f "$PLUGIN_DIR/.zshrc" ]; then
+        echo "Error: Required files not found in $PLUGIN_DIR"
         exit 1
     fi
 }
@@ -42,9 +44,9 @@ ensure_prerequisites() {
 setup() {
     echo "Setting up Zsh for root"
 
-    create_symlink "/boot/config/extra/.oh-my-zsh" "/root/.oh-my-zsh"
-    create_symlink "/boot/config/extra/.zshrc" "/root/.zshrc"
-    create_symlink "/boot/config/extra/.zsh_history" "/root/.zsh_history"
+    create_symlink "$PLUGIN_DIR/.oh-my-zsh" "/root/.oh-my-zsh"
+    create_symlink "$PLUGIN_DIR/.zshrc" "/root/.zshrc"
+    create_symlink "$PLUGIN_DIR/.zsh_history" "/root/.zsh_history"
 
     if ! grep -q "/bin/zsh" /etc/passwd | grep "root"; then
         if ! chsh -s /bin/zsh root; then
