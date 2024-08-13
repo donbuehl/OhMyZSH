@@ -2,21 +2,21 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "OhMyZSH">
 <!ENTITY author    "donbuehl">
-<!ENTITY version   "24.08.13-4">
+<!ENTITY version   "24.08.13-5">
 <!ENTITY launch    "Settings/OhMyZSH">
 <!ENTITY gitURL    "https://raw.githubusercontent.com/donbuehl/unraid-ohmyzsh/master">
 <!ENTITY pluginURL "&gitURL;/OhMyZSH.plg">
 <!ENTITY pkgURL    "&gitURL;/packages">
 <!ENTITY plgPATH   "/boot/config/plugins/&name;">
-<!ENTITY plgNAME   "OhMyZSH-24.08.13-4">
+<!ENTITY plgNAME   "OhMyZSH-24.08.13-5">
 <!ENTITY emhttp    "/usr/local/emhttp/plugins/&name;">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" support="https://forums.unraid.net/topic/XXXXXX-support-ohmyzsh-plugin/">
 
 <CHANGES>
-### 24.08.13-4
-- Update to version 24.08.13-4
+### 24.08.13-5
+- Update to version 24.08.13-5
 </CHANGES>
 
 <FILE Name="&plgPATH;/&name;.png">
