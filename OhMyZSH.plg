@@ -4,7 +4,7 @@
 <!ENTITY author    "donbuehl">
 <!ENTITY version   "24.08.13-8">
 <!ENTITY launch    "Settings/OhMyZSH">
-<!ENTITY gitURL    "https://raw.githubusercontent.com/donbuehl/unraid-ohmyzsh/master">
+<!ENTITY gitURL    "https://raw.githubusercontent.com/donbuehl/OhMyZSH/main">
 <!ENTITY pluginURL "&gitURL;/OhMyZSH.plg">
 <!ENTITY pkgURL    "&gitURL;/packages">
 <!ENTITY plgPATH   "/boot/config/plugins/&name;">

@@ -2,10 +2,14 @@
 
 set -e  # Exit immediately if a command exits with a non-zero status.
 
+clean_old_archives() {
+    rm -f archive/*.txz
+}
+
 PLUGIN_NAME="OhMyZSH"
 PLG_FILE="$(pwd)/${PLUGIN_NAME}.plg"
 CURRENT_DATE=$(date +"%y.%m.%d")
-VERSION=""
+VERSION_FILE=".version"
 SRC_DIR="src"
 TMP_DIR="/tmp/${PLUGIN_NAME}_build"
 ARCHIVE_DIR="$(pwd)/archive"
@@ -35,8 +39,25 @@ handle_version_increment() {
 }
 
 get_version() {
-    local daily_version=$(handle_version_increment)
-    VERSION="${CURRENT_DATE}-${daily_version}"
+    if [ -f "$VERSION_FILE" ]; then
+        local last_version=$(cat "$VERSION_FILE")
+        local last_date=$(echo $last_version | cut -d'-' -f1)
+        local last_build=$(echo $last_version | cut -d'-' -f2)
+        
+        local current_date=$(date +"%y.%m.%d")
+        
+        if [ "$current_date" = "$last_date" ]; then
+            build=$((last_build + 1))
+        else
+            build=1
+        fi
+        
+        VERSION="${current_date}-${build}"
+    else
+        VERSION="$(date +"%y.%m.%d")-1"
+    fi
+    
+    echo $VERSION > "$VERSION_FILE"
     echo "Creating version: $VERSION"
 }
 
@@ -69,13 +90,19 @@ update_plg_file() {
         exit 1
     fi
 
-    sed -i "s|<!ENTITY version.*>|<!ENTITY version \"${VERSION}\">|" "$PLG_FILE"
+    sed -i "s|<!ENTITY version  .*>|<!ENTITY version   \"${VERSION}\">|" "$PLG_FILE"
+    sed -i "s|<!ENTITY plgNAME  .*>|<!ENTITY plgNAME   \"${PLUGIN_NAME}-${VERSION}\">|" "$PLG_FILE"
     sed -i "s|<FILE Name=\".*${PLUGIN_NAME}-.*\.txz\">|<FILE Name=\"&plgCONF;/${archive_name}\">|" "$PLG_FILE"
     sed -i "s|<URL>.*${PLUGIN_NAME}-.*\.txz</URL>|<URL>&pkgURL;/${archive_name}</URL>|" "$PLG_FILE"
+    
+    # Update the CHANGES section
+    sed -i "/^<CHANGES>/,/<\/CHANGES>/c\<CHANGES>\n### ${VERSION}\n- Update to version ${VERSION}\n<\/CHANGES>" "$PLG_FILE"
+    
     echo ".plg file updated with version ${VERSION}"
 }
 
 main() {
+    clean_old_archives
     get_version
     prepare_archive
     create_archive
