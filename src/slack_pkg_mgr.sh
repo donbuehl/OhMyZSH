@@ -13,58 +13,56 @@ extract_version() {
 
 get_latest_version() {
     local package=$1
-    echo "Checking for the latest version of $package..."
     local latest_version=$(curl -s $SLACKWARE_URL | grep -oP "${package}-[0-9.]+-(x86_64|noarch)-[0-9]+\.txz" | sort -V | tail -n1)
     if [ -z "$latest_version" ]; then
         echo "Error: No version of $package found"
         return 1
     fi
-    echo "Latest version of $package: $latest_version"
     echo "$latest_version"
 }
 
-check_existing_version() {
+check_package_exists() {
     local package=$1
     local existing_file=$(ls ${DOWNLOAD_DIR}/${package}-*.txz 2>/dev/null | head -n1)
-    if [ -n "$existing_file" ]; then
-        local existing_version=$(extract_version "$(basename "$existing_file")")
-        echo "Checking if $package: $(basename "$existing_file") is already installed"
+    if [ -n "$existing_file" ] && [ -f "$existing_file" ]; then
         echo "$existing_file"
     else
-        echo "No existing version of $package found"
         echo ""
     fi
 }
 
-download_package() {
+install_package() {
     local package=$1
-    echo "Installing $package"
-    wget -P "$DOWNLOAD_DIR" "${SLACKWARE_URL}${package}"
-    echo "$package has been successfully downloaded."
+    local latest_version=$(get_latest_version $package)
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to get latest version of $package"
+        return 1
+    fi
+    echo "Installing $latest_version"
+    wget -P "$DOWNLOAD_DIR" "${SLACKWARE_URL}${latest_version}"
+    if [ $? -eq 0 ]; then
+        installpkg "${DOWNLOAD_DIR}/${latest_version}"
+    else
+        echo "Error: Failed to download $latest_version"
+        return 1
+    fi
 }
 
-update_package() {
-    local package=$1
-    
-    local latest_version=$(get_latest_version $package)
-    [ $? -ne 0 ] && return 1
-    
-    local existing_file=$(check_existing_version $package)
-    
-    if [ -n "$existing_file" ]; then
-        local existing_version=$(extract_version "$(basename "$existing_file")")
-        local new_version=$(extract_version "$latest_version")
-        
-        if version_gt "$new_version" "$existing_version"; then
-            echo "Replacing $existing_version of $package with $latest_version"
-            rm "$existing_file"
-            download_package $latest_version
-        else
-            echo "The existing version $existing_version of $package is already up to date. No download required."
-        fi
+check_version() {
+    local existing_file=$1
+    local latest_version=$2
+    local existing_version=$(extract_version "$(basename "$existing_file")")
+    local new_version=$(extract_version "$latest_version")
+    if version_gt "$new_version" "$existing_version"; then
+        echo "newer"
     else
-        download_package $latest_version
+        echo "current"
     fi
+}
+
+delete_package() {
+    local file=$1
+    rm "$file"
 }
 
 check_root() {
@@ -76,9 +74,27 @@ check_root() {
 
 main() {
     check_root
-    update_package "zsh"
-    echo "------------------------"
-    update_package "tmux"
+
+    local packages=("zsh" "tmux")
+    for package in "${packages[@]}"; do
+        echo "Processing $package..."
+        local existing_file=$(check_package_exists "$package")
+        
+        if [ -z "$existing_file" ]; then
+            install_package "$package"
+        else
+            local latest_version=$(get_latest_version $package)
+            local version_status=$(check_version "$existing_file" "$latest_version")
+            if [ "$version_status" = "newer" ]; then
+                delete_package "$existing_file"
+                install_package "$package"
+            else
+                echo "The existing version of $package is up to date. No action required."
+            fi
+        fi
+        echo "------------------------"
+    done
+    
     echo "Process completed"
 }
 

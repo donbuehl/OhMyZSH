@@ -1,30 +1,18 @@
 #!/bin/bash
 
 PLUGIN_DIR="/boot/config/plugins/OhMyZSH"
+DEFAULT_THEME="PureUnraid"
+DEFAULT_PLUGINS="git copypath copyfile copybuffer dirhistory zsh-autosuggestions zsh-syntax-highlighting sudo history tmux"
 
-init_plugin_folder() {
-    mkdir -p "$PLUGIN_DIR"
-    echo "Plugin directory initialized: $PLUGIN_DIR"
-}
-
-create_zshrc() {
-    cat << EOF > "$PLUGIN_DIR/.zshrc"
-export ZSH="/root/.oh-my-zsh"
-ZSH_THEME="PureUnraid"
-ENABLE_CORRECTION="true"
-CORRECT_IGNORE="[_|.]*"
-plugins=(git copypath copyfile copybuffer dirhistory zsh-autosuggestions zsh-syntax-highlighting sudo history tmux)
-zstyle ':omz:update' mode auto
-source \$ZSH/oh-my-zsh.sh
-EOF
-    echo "Customized .zshrc file created: $PLUGIN_DIR/.zshrc"
+prepare_slackware_packages() {
+    sh slack_pkg_mgr.sh
 }
 
 install_oh_my_zsh() {
     export RUNZSH=no
     export KEEP_ZSHRC=yes
     ZSH="$PLUGIN_DIR/.oh-my-zsh" sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-    echo "Oh My Zsh installed in: $PLUGIN_DIR/.oh-my-zsh"
+    echo "Oh My Zsh installed"
 }
 
 create_theme() {
@@ -42,7 +30,7 @@ ZSH_THEME_GIT_PROMPT_SUFFIX=")%f "
 ZSH_THEME_GIT_PROMPT_CLEAN=""
 ZSH_THEME_GIT_PROMPT_DIRTY="%F{red}*%F{cyan}"
 EOF
-    echo "PureUnraid theme created: $PLUGIN_DIR/.oh-my-zsh/custom/themes/PureUnraid.zsh-theme"
+    echo "PureUnraid theme created"
 }
 
 install_plugins() {
@@ -53,9 +41,22 @@ install_plugins() {
     echo "zsh-syntax-highlighting plugin installed"
 }
 
+rewrite_zshrc() {
+    cat << EOF > "$PLUGIN_DIR/.zshrc"
+export ZSH="/root/.oh-my-zsh"
+ZSH_THEME="$DEFAULT_THEME"
+ENABLE_CORRECTION="true"
+CORRECT_IGNORE="[_|.]*"
+plugins=($DEFAULT_PLUGINS)
+zstyle ':omz:update' mode auto
+source \$ZSH/oh-my-zsh.sh
+EOF
+    echo ".zshrc rewritten"
+}
+
 create_history_file() {
     touch "$PLUGIN_DIR/.zsh_history"
-    echo "Empty .zsh_history file created: $PLUGIN_DIR/.zsh_history"
+    echo "Empty .zsh_history file created"
 }
 
 set_permissions() {
@@ -66,14 +67,20 @@ set_permissions() {
     echo "Permissions set for all files and newly installed plugins"
 }
 
+restart_ttyd() {
+    pidof ttyd | xargs -r kill && ttyd -p 7681 -i lo zsh &
+    echo "ttyd restarted"
+}
+
 main() {
-    init_plugin_folder
-    create_zshrc
+    prepare_slackware_packages
     install_oh_my_zsh
     create_theme
     install_plugins
+    rewrite_zshrc
     create_history_file
     set_permissions
+    restart_ttyd
     echo "Installation completed. Please run the start_ohmyzsh.sh script on the next system startup."
 }
 
